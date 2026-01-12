@@ -24,7 +24,7 @@ sequelize.authenticate()
   .then(() => {
     console.log("✅ MariaDB connecté");
     app.listen(PORT, () =>
-      console.log(`🚀 API sur http://localhost:${PORT}`)
+      console.log(`🚀 API sur http://0.0.0.0:${PORT}`)
     );
   })
   .catch((err) => console.error("❌ Erreur DB", err));
