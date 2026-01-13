@@ -17,11 +17,29 @@ module.exports = connectDB; */
 // db.js
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize(process.env.MYSQL_ADDON_DB, process.env.MYSQL_ADDON_USER, process.env.MYSQL_ADDON_PASSWORD, {
-  host: process.env.MYSQL_ADDON_HOST,
-  port: process.env.MYSQL_ADDON_PORT,
-  dialect: "mariadb",
-  logging: false,
-});
+// Utilisation des variables fournies par Clever Cloud
+const sequelize = new Sequelize(
+  process.env.MYSQL_ADDON_DB,         // nom de la base
+  process.env.MYSQL_ADDON_USER,       // utilisateur
+  process.env.MYSQL_ADDON_PASSWORD,   // mot de passe
+  {
+    host: process.env.MYSQL_ADDON_HOST,  // hôte
+    port: process.env.MYSQL_ADDON_PORT,  // port (optionnel, 3306 par défaut)
+    dialect: "mysql",                    // ou "mariadb" si vous utilisez MariaDB
+    logging: false,
+  }
+);
 
-module.exports = sequelize;
+// Fonction pour tester la connexion
+const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("✅ DB connected successfully");
+  } catch (error) {
+    console.error("❌ DB connection failed:", error);
+    process.exit(1); // quitte le processus si la DB ne se connecte pas
+  }
+};
+
+module.exports = { sequelize, connectDB };
+
