@@ -18,7 +18,7 @@ require("dotenv").config();
 const app = require("./src/app");
 const sequelize = require("./src/config/db");
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || '0.0.0.0';
 
 sequelize.authenticate()
   .then(() => {
