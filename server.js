@@ -57,7 +57,7 @@ connectDB().finally(() => {
   });
 }); */
 
-require("dotenv").config();
+/* require("dotenv").config();
 const { connectDB } = require("./src/config/db");
 const app = require("./src/app"); // app corrigé
 
@@ -67,3 +67,22 @@ connectDB().finally(() => {
     console.log(`Server listening on 0.0.0.0:${PORT}`);
   });
 });
+ */
+
+require("dotenv").config();
+const sequelize = require("./src/config/db"); // ← juste l'instance Sequelize
+const app = require("./src/app"); 
+
+// Synchroniser la DB (crée les tables si elles n'existent pas)
+sequelize.sync()
+  .then(() => {
+    console.log("✅ Database connected and tables are ready");
+
+    const PORT = process.env.PORT || 8080;
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server listening on 0.0.0.0:${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error("❌ Unable to connect to the database:", err);
+  });
