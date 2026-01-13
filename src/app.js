@@ -39,7 +39,9 @@ const categoryRoutes = require("./routes/category.routes");
 
 
 const app = express();
-
+app.get('/', (req, res) => {
+  res.json({ status: 'API OK 🚀' });
+});
 app.use(cors());
 app.use(express.json());
 
