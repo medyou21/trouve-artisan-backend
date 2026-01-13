@@ -22,5 +22,10 @@ Artisan.init({
   tableName: "Artisans",
   timestamps: false,
 });
+// Synchronisation de la table (optionnel, Clever Cloud)
+sequelize.sync({ alter: true })
+  .then(() => console.log("✅ Table Artisan synchronisée"))
+  .catch(err => console.error("❌ Erreur synchronisation table:", err));
+
 
 module.exports = Artisan;
