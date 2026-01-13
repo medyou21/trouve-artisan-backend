@@ -21,7 +21,9 @@ const cors = require("cors");
 const { connectDB } = require("./src/config/db");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://trouve-artisan-frontend.vercel.app" // l’URL de frontend
+}));
 app.use(express.json());
 
 
