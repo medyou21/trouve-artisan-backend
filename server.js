@@ -30,11 +30,11 @@ sequelize.authenticate()
   .catch((err) => console.error("❌ Erreur DB", err));
  */
 
-
+/* 
   require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-
+const app = require("./src/app"); // Express app déjà configuré
 const { connectDB } = require("./src/config/db");
 
 const app = express();
@@ -51,6 +51,17 @@ app.use(express.json());
 
 
 // Connectez la DB puis démarrez le serveur
+connectDB().finally(() => {
+  const PORT = process.env.PORT || 8080;
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server listening on 0.0.0.0:${PORT}`);
+  });
+}); */
+
+require("dotenv").config();
+const { connectDB } = require("./src/config/db");
+const app = require("./src/app"); // app corrigé
+
 connectDB().finally(() => {
   const PORT = process.env.PORT || 8080;
   app.listen(PORT, "0.0.0.0", () => {
