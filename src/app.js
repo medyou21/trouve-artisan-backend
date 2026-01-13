@@ -67,9 +67,8 @@ app.use(helmet());
 
 // ✅ CORS pour plusieurs domaines Vercel
 const allowedOrigins = [
-  "https://trouve-artisan-frontend.vercel.app",
-  "https://trouve-artisan-frontend-git-f-2f7041-mohameds-projects-8c8684ce.vercel.app"
-];
+  "https://trouve-artisan-frontend-mohameds-projects-8c8684ce.vercel.app/",
+"https://trouve-artisan-frontend-git-main-mohameds-projects-8c8684ce.vercel.app/"];
 
 app.use(cors({
   origin: (origin, callback) => {
