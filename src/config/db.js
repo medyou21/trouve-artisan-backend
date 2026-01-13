@@ -14,18 +14,14 @@ const connectDB = async () => {
 module.exports = connectDB; */
 
 
-// src/config/db.js
+// db.js
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: "mariadb",
-    logging: false,
-  }
-);
+const sequelize = new Sequelize(process.env.MYSQL_ADDON_DB, process.env.MYSQL_ADDON_USER, process.env.MYSQL_ADDON_PASSWORD, {
+  host: process.env.MYSQL_ADDON_HOST,
+  port: process.env.MYSQL_ADDON_PORT,
+  dialect: "mariadb",
+  logging: false,
+});
 
 module.exports = sequelize;
