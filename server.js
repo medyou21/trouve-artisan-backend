@@ -24,8 +24,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.get("/", (req, res) => res.send("API OK 🚀"));
+
 
 // Connectez la DB puis démarrez le serveur
 connectDB().finally(() => {
