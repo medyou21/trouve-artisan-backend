@@ -94,4 +94,7 @@ app.use("/api/artisans", artisanRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/contact", contactRoutes);
 
+app.get("/", (req, res) => {
+  res.json({ status: "API OK 🚀" });
+})
 module.exports = app;
