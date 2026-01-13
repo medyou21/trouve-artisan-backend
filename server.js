@@ -14,7 +14,23 @@ app.listen(PORT, () => {
 });
  */
 
-require("dotenv").config();
+/* require("dotenv").config();
+const app = require("./src/app");
+const sequelize = require("./src/config/db");
+
+
+sequelize.authenticate()
+  .then(() => {
+    console.log("✅ MariaDB connecté");
+    app.listen(PORT, () =>
+      console.log(`🚀 API sur http://0.0.0.0:${PORT}`)
+    );
+  })
+  .catch((err) => console.error("❌ Erreur DB", err));
+ */
+
+
+  require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
