@@ -30,16 +30,7 @@ const sequelize = new Sequelize(
   }
 );
 
-// Fonction pour tester la connexion
-const connectDB = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("✅ DB connected successfully");
-  } catch (error) {
-    console.error("❌ DB connection failed:", error);
-    process.exit(1); // quitte le processus si la DB ne se connecte pas
-  }
-};
 
-module.exports = { sequelize, connectDB };
+
+module.exports = { sequelize };
 
