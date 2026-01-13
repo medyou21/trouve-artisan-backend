@@ -14,7 +14,7 @@ const connectDB = async () => {
 module.exports = connectDB; */
 
 
-// src/config/db.js
+// db.js
 const { Sequelize } = require("sequelize");
 
 // Utilisation des variables fournies par Clever Cloud
