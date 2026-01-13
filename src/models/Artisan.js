@@ -19,7 +19,7 @@ Artisan.init({
 }, {
   sequelize, // ← instance Sequelize
   modelName: "Artisan",
-  tableName: "Artisans",
+  tableName: "artisans",
   timestamps: false,
 });
 // Synchronisation de la table (optionnel, Clever Cloud)
