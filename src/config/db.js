@@ -8,7 +8,8 @@ const sequelize = new Sequelize(
     host: process.env.MYSQL_ADDON_HOST, // hôte Clever Cloud
     port: process.env.MYSQL_ADDON_PORT, // port Clever Cloud
     dialect: "mysql",
-    logging: false, // désactive les logs SQL
+   // logging: false, // désactive les logs SQL
+   logging: console.log, // voir les requêtes SQL
   }
 );
 
