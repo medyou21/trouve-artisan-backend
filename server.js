@@ -37,7 +37,7 @@ const cors = require("cors");
 const { connectDB } = require("./src/config/db");
 
 const app = express();
-aapp.use(cors({
+app.use(cors({
   origin: [
     "https://trouve-artisan-frontend.vercel.app",
     "https://trouve-artisan-frontend-git-f-2f7041-mohameds-projects-8c8684ce.vercel.app"
