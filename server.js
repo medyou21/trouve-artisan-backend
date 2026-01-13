@@ -15,16 +15,22 @@ app.listen(PORT, () => {
  */
 
 require("dotenv").config();
-const app = require("./src/app");
-const sequelize = require("./src/config/db");
+const express = require("express");
+const cors = require("cors");
 
-const PORT = process.env.PORT || '0.0.0.0';
+const { connectDB } = require("./src/config/db");
 
-sequelize.authenticate()
-  .then(() => {
-    console.log("✅ MariaDB connecté");
-    app.listen(PORT, () =>
-      console.log(`🚀 API sur http://0.0.0.0:${PORT}`)
-    );
-  })
-  .catch((err) => console.error("❌ Erreur DB", err));
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.get("/", (req, res) => res.send("API OK 🚀"));
+
+// Connectez la DB puis démarrez le serveur
+connectDB().finally(() => {
+  const PORT = process.env.PORT || 8080;
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server listening on 0.0.0.0:${PORT}`);
+  });
+});
