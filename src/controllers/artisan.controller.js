@@ -1,108 +1,105 @@
-/* const Artisan = require("../models/Artisan");
-
-// 🔹 Tous les artisans
-exports.getAll = async (req, res) => {
-  try {
-    const artisans = await Artisan.find();
-    res.json(artisans);
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-};
-
-// 🔹 Un artisan par ID
-exports.getOne = async (req, res) => {
-  try {
-    const artisan = await Artisan.findById(req.params.id);
-
-    if (!artisan) {
-      return res.status(404).json({ message: "Artisan non trouvé" });
-    }
-
-    res.json(artisan);
-  } catch (err) {
-    res.status(500).json({ message: "ID invalide" });
-  }
-};
-
-// 🔥 Artisans du mois (Top)
-exports.getTopArtisans = async (req, res) => {
-  try {
-    // ✅ top est un Boolean
-    const artisans = await Artisan.find({ Top: true }).limit(3);
-    res.json(artisans);
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-};
-
-// ⭐ Option alternative : meilleurs notés
-exports.getBestRated = async (req, res) => {
-  try {
-    const artisans = await Artisan.find()
-      .sort({ note: -1 }) // note minuscule
-      .limit(3);
-
-    res.json(artisans);
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-};
- */
-
 const { Op } = require("sequelize");
 const Artisan = require("../models/Artisan");
 
-// Tous
+/**
+ * Récupérer tous les artisans
+ */
 exports.getAll = async (req, res) => {
-  const artisans = await Artisan.findAll();
-  res.json(artisans);
+  try {
+    const artisans = await Artisan.findAll();
+    res.status(200).json(artisans);
+  } catch (error) {
+    console.error("Erreur getAll artisans :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 };
 
-
-
-// Top artisans
+/**
+ * Récupérer les artisans mis en avant
+ */
 exports.getTopArtisans = async (req, res) => {
-  const artisans = await Artisan.findAll({ where: { top: true } });
-  res.json(artisans);
+  try {
+    const artisans = await Artisan.findAll({
+      where: { top: true },
+    });
+    res.status(200).json(artisans);
+  } catch (error) {
+    console.error("Erreur getTopArtisans :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 };
 
-// Par catégorie
+/**
+ * Récupérer les artisans par catégorie
+ */
 exports.getByCategorie = async (req, res) => {
-  const artisans = await Artisan.findAll({
-    where: { categorie: req.params.categorie },
-  });
-  res.json(artisans);
+  try {
+    const { categorie } = req.params;
+
+    if (!categorie) {
+      return res.status(400).json({ message: "Catégorie manquante" });
+    }
+
+    const artisans = await Artisan.findAll({
+      where: { categorie },
+    });
+
+    res.status(200).json(artisans);
+  } catch (error) {
+    console.error("Erreur getByCategorie :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 };
 
-// Recherche
+/**
+ * Recherche d'artisans par nom
+ */
 exports.search = async (req, res) => {
-  const { query } = req.query;
-  if (!query) return res.json([]);
+  try {
+    const { query } = req.query;
 
-  const artisans = await Artisan.findAll({
-    where: {
-      nom: { [Op.like]: `%${query}%` },
-    },
-  });
+    if (!query || query.trim() === "") {
+      return res.status(200).json([]);
+    }
 
-  res.json(artisans);
+    const artisans = await Artisan.findAll({
+      where: {
+        nom: {
+          [Op.like]: `%${query}%`,
+        },
+      },
+    });
+
+    res.status(200).json(artisans);
+  } catch (error) {
+    console.error("Erreur search artisans :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 };
-// Par ID
+
+/**
+ * Récupérer un artisan par ID
+ */
 exports.getOne = async (req, res) => {
   try {
-    const artisan = await Artisan.findByPk(req.params.id);
+    const { id } = req.params;
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID invalide" });
+    }
+
+    const artisan = await Artisan.findByPk(id);
 
     if (!artisan) {
       return res.status(404).json({ message: "Artisan non trouvé" });
     }
 
-    // ✅ NORMALISATION DES CHAMPS
+    // Normalisation des champs (API stable)
     const normalized = {
       id: artisan.id,
       nom: artisan.nom,
       specialite: artisan.specialite,
-      categorie: artisan.categorie, 
+      categorie: artisan.categorie,
       ville: artisan.ville,
       departement: artisan.departement || "",
       note: Number(artisan.note) || 0,
@@ -112,9 +109,9 @@ exports.getOne = async (req, res) => {
       a_propos: artisan.a_propos || "",
     };
 
-    res.json(normalized);
-  } catch (err) {
-    console.error("Erreur getOne artisan :", err);
+    res.status(200).json(normalized);
+  } catch (error) {
+    console.error("Erreur getOne artisan :", error);
     res.status(500).json({ message: "Erreur serveur" });
   }
 };

@@ -1,32 +1,29 @@
-/* const mongoose = require("mongoose");
 
-const categorySchema = new mongoose.Schema({
-  label: { type: String, required: true },
-  slug: { type: String, required: true }
-});
-
-module.exports = mongoose.model("Category", categorySchema);
- */
-
+// models/category.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
 const Category = sequelize.define(
-  "category",
+  "Category",
   {
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       autoIncrement: true,
+      primaryKey: true,
     },
+
     nom: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
+
     slug: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
+      validate: {
+        is: /^[a-z0-9-]+$/i, // slug propre
+      },
     },
   },
   {

@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const contactController = require("../controllers/contact.controller");
 
-// exemple
-router.post("/", (req, res) => res.json({ message: "Formulaire contact reçu" }));
+// POST formulaire contact
+router.post("/", contactController.sendMail);
 
-module.exports = router;  // ✅ Important !
+module.exports = router;
