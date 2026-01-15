@@ -109,3 +109,26 @@ router.get("/search", async (req, res) => {
 router.get("/:id", artisanController.getOne);
 
 module.exports = router;
+  
+
+////à tester
+/* const express = require("express");
+const router = express.Router();
+const artisanController = require("../controllers/artisan.controller");
+
+// ✅ Tous les artisans
+router.get("/", artisanController.getAll);
+
+// ✅ Top artisans
+router.get("/top", artisanController.getTopArtisans);
+
+// ✅ Artisans par catégorie
+router.get("/categorie/:categorie", artisanController.getByCategorie);
+
+// ✅ Recherche par nom
+router.get("/search", artisanController.search);
+
+// ✅ Un artisan par ID (TOUJOURS À LA FIN)
+router.get("/:id", artisanController.getOne);
+
+module.exports = router; */
