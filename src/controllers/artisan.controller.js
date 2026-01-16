@@ -24,14 +24,16 @@ exports.getAll = async (req, res) => {
   }
 };
 
-// ✅ Top artisans (exemple par note)
+// ✅ Top artisans (exemple par top=true)
 exports.getTopArtisans = async (req, res) => {
   try {
     const artisans = await Artisan.findAll({
-      order: [["note", "DESC"]],
-      limit: 10,
+      where: { top: true },          // ✅ On filtre seulement les top artisans
+      order: [["note", "DESC"]],     // Tri par note décroissante
+      limit: 3,                      // On prend les 3 premiers
       include: includeRelations,
     });
+
     res.status(200).json(artisans);
   } catch (error) {
     console.error("Erreur getTopArtisans :", error);
