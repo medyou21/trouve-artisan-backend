@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const Artisan = require("../models/Artisan");
 const Category = require("../models/category");
 const Ville = require("../models/ville");
-const Departement = require("../mdels/departement");
+const Departement = require("../models/departement");
 const Specialite = require("../models/Specialite");
 
 // ✅ Tous les artisans (avec relations)
