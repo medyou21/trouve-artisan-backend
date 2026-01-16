@@ -132,3 +132,4 @@ const filterBy = (field) => async (req, res) => {
 exports.getByCategorie = filterBy("categorie_id");
 exports.getByVille = filterBy("ville_id");
 exports.getBySpecialite = filterBy("specialite_id");
+exports.getByDepartement = filterBy("departement_id");
