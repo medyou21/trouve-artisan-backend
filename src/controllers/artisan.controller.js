@@ -3,7 +3,7 @@ const Artisan = require("../models/Artisan");
 const Category = require("../models/category");
 const Ville = require("../models/ville");
 const Departement = require("../models/departement");
-const Specialite = require("../models/Specialite");
+const Specialite = require("../models/specialite");
 
 // ✅ Tous les artisans (avec relations)
 exports.getAll = async (req, res) => {
