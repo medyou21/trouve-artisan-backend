@@ -8,7 +8,6 @@ const Specialite = require("../models/specialite");
 /* =====================
    RELATIONS COMMUNES
 ===================== */
-
 const includeRelations = [
   {
     model: Category,
@@ -22,7 +21,7 @@ const includeRelations = [
     include: [
       {
         model: Departement,
-        as: "departement", // ✅ ALIAS CORRECT
+        as: "departement",
         attributes: ["id", "code", "nom"],
       },
     ],
@@ -37,12 +36,9 @@ const includeRelations = [
 /* =====================
    TOUS LES ARTISANS
 ===================== */
-
 exports.getAll = async (req, res) => {
   try {
-    const artisans = await Artisan.findAll({
-      include: includeRelations,
-    });
+    const artisans = await Artisan.findAll({ include: includeRelations });
     res.status(200).json(artisans);
   } catch (error) {
     console.error("Erreur getAll artisans :", error);
@@ -53,7 +49,6 @@ exports.getAll = async (req, res) => {
 /* =====================
    TOP ARTISANS
 ===================== */
-
 exports.getTopArtisans = async (req, res) => {
   try {
     const artisans = await Artisan.findAll({
@@ -72,7 +67,6 @@ exports.getTopArtisans = async (req, res) => {
 /* =====================
    RECHERCHE PAR NOM
 ===================== */
-
 exports.search = async (req, res) => {
   try {
     const { query } = req.query;
@@ -91,9 +85,8 @@ exports.search = async (req, res) => {
 };
 
 /* =====================
-   FILTRES AVANCÉS
+   FILTRE PAR CATÉGORIE / VILLE / SPÉCIALITÉ / DÉPARTEMENT
 ===================== */
-
 exports.filter = async (req, res) => {
   try {
     const { categorie_id, departement_id, ville_id, specialite_id } = req.query;
@@ -110,13 +103,12 @@ exports.filter = async (req, res) => {
       include: [
         {
           model: Departement,
-          as: "departement", // ✅
+          as: "departement",
           attributes: ["id", "code", "nom"],
         },
       ],
     };
 
-    // 🔹 Filtre par département via la ville
     if (departement_id) {
       villeInclude.include[0].where = { id: departement_id };
     }
@@ -124,17 +116,9 @@ exports.filter = async (req, res) => {
     const artisans = await Artisan.findAll({
       where,
       include: [
-        {
-          model: Category,
-          as: "categorie",
-          attributes: ["id", "nom", "slug"],
-        },
+        { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
         villeInclude,
-        {
-          model: Specialite,
-          as: "specialite_obj",
-          attributes: ["id", "nom"],
-        },
+        { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
       ],
     });
 
@@ -146,19 +130,12 @@ exports.filter = async (req, res) => {
 };
 
 /* =====================
-   UN ARTISAN
+   ARTISAN PAR ID
 ===================== */
-
 exports.getOne = async (req, res) => {
   try {
-    const artisan = await Artisan.findByPk(req.params.id, {
-      include: includeRelations,
-    });
-
-    if (!artisan) {
-      return res.status(404).json({ message: "Artisan non trouvé" });
-    }
-
+    const artisan = await Artisan.findByPk(req.params.id, { include: includeRelations });
+    if (!artisan) return res.status(404).json({ message: "Artisan non trouvé" });
     res.status(200).json(artisan);
   } catch (error) {
     console.error("Erreur getOne artisan :", error);
@@ -169,7 +146,6 @@ exports.getOne = async (req, res) => {
 /* =====================
    FILTRES SIMPLES
 ===================== */
-
 const filterBy = (field) => async (req, res) => {
   try {
     const artisans = await Artisan.findAll({
@@ -187,4 +163,32 @@ exports.getByCategorie = filterBy("categorie_id");
 exports.getByVille = filterBy("ville_id");
 exports.getBySpecialite = filterBy("specialite_id");
 
-
+// 🔹 filtre par departement
+exports.getByDepartement = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const artisans = await Artisan.findAll({
+      include: [
+        { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
+        {
+          model: Ville,
+          as: "ville_obj",
+          attributes: ["id", "nom"],
+          include: [
+            {
+              model: Departement,
+              as: "departement",
+              attributes: ["id", "code", "nom"],
+              where: { id },
+            },
+          ],
+        },
+        { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
+      ],
+    });
+    res.status(200).json(artisans);
+  } catch (error) {
+    console.error("Erreur getByDepartement :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
