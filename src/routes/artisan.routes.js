@@ -15,7 +15,7 @@ router.get("/search", artisanController.search);
 router.get("/categorie/:id", artisanController.getByCategorie);
 
 // ✅ Artisans par département
-//router.get("/departement/:id", artisanController.getByDepartement);
+router.get("/departement/:id", artisanController.getByDepartement);
 
 // ✅ Artisans par ville
 router.get("/ville/:id", artisanController.getByVille);
