@@ -1,32 +1,28 @@
-
-// models/category.js
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
-const Category = sequelize.define(
-  "Category",
+class Category extends Model {}
+
+Category.init(
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-
     nom: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-
     slug: {
       type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
-      validate: {
-        is: /^[a-z0-9-]+$/i, // slug propre
-      },
     },
   },
   {
+    sequelize,
+    modelName: "Category",
     tableName: "categories",
     timestamps: false,
   }
