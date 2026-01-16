@@ -61,7 +61,7 @@ Artisan.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "categories",
+        model: "category",
         key: "id",
       },
       onDelete: "RESTRICT",
@@ -72,7 +72,7 @@ Artisan.init(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: "specialites",
+        model: "Specialite",
         key: "id",
       },
       onDelete: "SET NULL",
@@ -83,7 +83,7 @@ Artisan.init(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: "villes",
+        model: "ville",
         key: "id",
       },
       onDelete: "SET NULL",
