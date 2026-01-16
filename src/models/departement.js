@@ -22,7 +22,7 @@ Departement.init(
   },
   {
     sequelize,
-    modelName: "Departement",
+    modelName: "departement",
     tableName: "departements",
     timestamps: false,
   }

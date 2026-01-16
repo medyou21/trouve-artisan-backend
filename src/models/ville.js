@@ -19,7 +19,7 @@ Ville.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: Departement,
+        model: "departement",
         key: "id",
       },
       onDelete: "CASCADE",
