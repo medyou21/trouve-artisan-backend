@@ -5,11 +5,15 @@ const Ville = require("../models/ville");
 const Departement = require("../models/departement");
 const Specialite = require("../models/specialite");
 
-// Relations communes pour toutes les requêtes
+// 🔹 Relations communes
 const includeRelations = [
   { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
-  { model: Ville, as: "ville_obj", attributes: ["id", "nom"] },
-  { model: Departement, as: "departement_obj", attributes: ["id", "code", "nom"] },
+  { 
+    model: Ville, as: "ville_obj", attributes: ["id", "nom"],
+    include: [
+      { model: Departement, as: "departement_obj", attributes: ["id", "code", "nom"] }
+    ]
+  },
   { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
 ];
 
@@ -24,16 +28,15 @@ exports.getAll = async (req, res) => {
   }
 };
 
-// ✅ Top artisans (exemple par top=true)
+// ✅ Top artisans
 exports.getTopArtisans = async (req, res) => {
   try {
     const artisans = await Artisan.findAll({
-      where: { top: true },          // ✅ On filtre seulement les top artisans
-      order: [["note", "DESC"]],     // Tri par note décroissante
-      limit: 3,                      // On prend les 3 premiers
+      where: { top: true },
+      order: [["note", "DESC"]],
+      limit: 3,
       include: includeRelations,
     });
-
     res.status(200).json(artisans);
   } catch (error) {
     console.error("Erreur getTopArtisans :", error);
@@ -46,10 +49,12 @@ exports.search = async (req, res) => {
   try {
     const { query } = req.query;
     if (!query || query.trim() === "") return res.status(200).json([]);
+    
     const artisans = await Artisan.findAll({
       where: { nom: { [Op.like]: `%${query}%` } },
       include: includeRelations,
     });
+    
     res.status(200).json(artisans);
   } catch (error) {
     console.error("Erreur search artisans :", error);
@@ -61,16 +66,34 @@ exports.search = async (req, res) => {
 exports.filter = async (req, res) => {
   try {
     const { categorie_id, departement_id, ville_id, specialite_id } = req.query;
+
     const where = {};
     if (categorie_id) where.categorie_id = categorie_id;
-    if (departement_id) where.departement_id = departement_id;
     if (ville_id) where.ville_id = ville_id;
     if (specialite_id) where.specialite_id = specialite_id;
 
+    // 🔹 Filtrage département via include
+    const villeInclude = {
+      model: Ville,
+      as: "ville_obj",
+      attributes: ["id", "nom"],
+      include: [
+        { model: Departement, as: "departement_obj", attributes: ["id", "code", "nom"] }
+      ]
+    };
+    if (departement_id) {
+      villeInclude.include[0].where = { id: departement_id };
+    }
+
     const artisans = await Artisan.findAll({
       where,
-      include: includeRelations,
+      include: [
+        { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
+        villeInclude,
+        { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] }
+      ],
     });
+
     res.status(200).json(artisans);
   } catch (error) {
     console.error("Erreur filtre artisans :", error);
@@ -91,11 +114,12 @@ exports.getOne = async (req, res) => {
   }
 };
 
-// ✅ Fonctions génériques pour filtrer par clé
+// ✅ Fonctions génériques pour filtrer par clé (catégorie, ville, spécialité)
 const filterBy = (field) => async (req, res) => {
   try {
+    const where = { [field]: req.params.id };
     const artisans = await Artisan.findAll({
-      where: { [field]: req.params.id },
+      where,
       include: includeRelations,
     });
     res.status(200).json(artisans);
@@ -105,8 +129,6 @@ const filterBy = (field) => async (req, res) => {
   }
 };
 
-// ✅ Routes spécifiques
 exports.getByCategorie = filterBy("categorie_id");
-exports.getByDepartement = filterBy("departement_id");
 exports.getByVille = filterBy("ville_id");
 exports.getBySpecialite = filterBy("specialite_id");

@@ -34,7 +34,20 @@ Ville.init(
   }
 );
 
-// Association : une ville appartient à un département
-Ville.belongsTo(Departement, { foreignKey: "departement_id", as: "departement" });
+/* =====================
+   ASSOCIATIONS
+===================== */
+
+// Une ville appartient à un département
+Ville.belongsTo(Departement, {
+  foreignKey: "departement_id",
+  as: "departement_obj", // 🔹 cohérent avec la structure du controller
+});
+
+// Optionnel : un département a plusieurs villes
+Departement.hasMany(Ville, {
+  foreignKey: "departement_id",
+  as: "villes",
+});
 
 module.exports = Ville;

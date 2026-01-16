@@ -3,7 +3,6 @@ const sequelize = require("../config/db");
 
 const Category = require("./category");
 const Ville = require("./ville");
-const Departement = require("./departement");
 const Specialite = require("./specialite");
 
 class Artisan extends Model {}
@@ -62,7 +61,7 @@ Artisan.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "categories", // ✅ NOM DE TABLE
+        model: "categories",
         key: "id",
       },
       onDelete: "RESTRICT",
@@ -71,7 +70,7 @@ Artisan.init(
 
     specialite_id: {
       type: DataTypes.INTEGER,
-      allowNull: true, // ✅ OBLIGATOIRE avec SET NULL
+      allowNull: true,
       references: {
         model: "specialites",
         key: "id",
@@ -85,17 +84,6 @@ Artisan.init(
       allowNull: true,
       references: {
         model: "villes",
-        key: "id",
-      },
-      onDelete: "SET NULL",
-      onUpdate: "CASCADE",
-    },
-
-    departement_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: "departements",
         key: "id",
       },
       onDelete: "SET NULL",
@@ -121,17 +109,12 @@ Artisan.belongsTo(Category, {
 
 Artisan.belongsTo(Specialite, {
   foreignKey: "specialite_id",
-  as: "specialite_obj", // ✅ cohérent avec controller
+  as: "specialite_obj",
 });
 
 Artisan.belongsTo(Ville, {
   foreignKey: "ville_id",
   as: "ville_obj",
-});
-
-Artisan.belongsTo(Departement, {
-  foreignKey: "departement_id",
-  as: "departement_obj",
 });
 
 module.exports = Artisan;
