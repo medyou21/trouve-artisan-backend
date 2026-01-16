@@ -1,38 +1,40 @@
 /**
- * Configuration de la connexion à la base de données
- * via Sequelize (MySQL / MariaDB)
+ * Configuration Sequelize
+ * MySQL / MariaDB (Clever Cloud)
  */
 
 const { Sequelize } = require("sequelize");
 
-// Création de l'instance Sequelize
 const sequelize = new Sequelize(
-  process.env.MYSQL_ADDON_DB,        // Nom de la base de données
-  process.env.MYSQL_ADDON_USER,      // Utilisateur
-  process.env.MYSQL_ADDON_PASSWORD,  // Mot de passe
+  process.env.MYSQL_ADDON_DB,       // Nom de la base
+  process.env.MYSQL_ADDON_USER,     // Utilisateur
+  process.env.MYSQL_ADDON_PASSWORD, // Mot de passe
   {
-    host: process.env.MYSQL_ADDON_HOST, // Hôte Clever Cloud
-    port: process.env.MYSQL_ADDON_PORT, // Port Clever Cloud
+    host: process.env.MYSQL_ADDON_HOST,
+    port: process.env.MYSQL_ADDON_PORT,
     dialect: "mysql",
 
-    /**
-     * Active les logs SQL uniquement en développement
-     */
-    logging: process.env.NODE_ENV === "development" ? console.log : false,
-
-    /**
-     * Options globales des modèles
-     */
-    define: {
-      timestamps: true,
-      underscored: true,
+    /** Encodage recommandé */
+    dialectOptions: {
+      charset: "utf8mb4",
     },
 
-    /**
-     * Pool de connexions
-     */
+    /** Fuseau horaire */
+    timezone: "+01:00",
+
+    /** Logs SQL */
+    logging: process.env.NODE_ENV === "development" ? console.log : false,
+
+    /** Options globales des modèles */
+    define: {
+      timestamps: true,        // created_at / updated_at
+      underscored: true,       // snake_case
+      freezeTableName: true,   // empêche la pluralisation automatique
+    },
+
+    /** Pool de connexions */
     pool: {
-      max: 5,
+      max: 10,
       min: 0,
       acquire: 30000,
       idle: 10000,
@@ -40,14 +42,16 @@ const sequelize = new Sequelize(
   }
 );
 
-// Test de la connexion à la base de données
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("✅ Connexion à la base de données établie avec succès");
-  })
-  .catch((error) => {
-    console.error("❌ Impossible de se connecter à la base de données :", error);
-  });
+/**
+ * Test de connexion
+ */
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Connexion MySQL établie avec succès");
+  } catch (error) {
+    console.error("❌ Erreur de connexion MySQL :", error.message);
+  }
+})();
 
 module.exports = sequelize;

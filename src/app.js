@@ -5,13 +5,17 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
 
+// Routes
 const artisanRoutes = require("./routes/artisan.routes");
 const categoryRoutes = require("./routes/category.routes");
+const villeRoutes = require("./routes/ville.routes");
+const departementRoutes = require("./routes/departement.routes");
+const specialiteRoutes = require("./routes/specialite.routes");
 const contactRoutes = require("./routes/contact.routes");
 
 const app = express();
 
-// 🔹 Logs HTTP (dev uniquement)
+// 🔹 Logs HTTP (uniquement en dev)
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
@@ -52,6 +56,9 @@ app.use(
 // 🔹 Routes API
 app.use("/api/artisans", artisanRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/villes", villeRoutes);
+app.use("/api/departements", departementRoutes);
+app.use("/api/specialites", specialiteRoutes);
 app.use("/api/contact", contactRoutes);
 
 // 🔹 Route racine
@@ -62,6 +69,8 @@ app.get("/", (req, res) => {
 // 🔹 Middleware global de gestion des erreurs
 app.use((err, req, res, next) => {
   console.error("Erreur globale :", err.message);
+  if (process.env.NODE_ENV === "development") console.error(err.stack);
+
   if (err.message === "CORS not allowed") {
     return res.status(403).json({ message: "Origine non autorisée" });
   }

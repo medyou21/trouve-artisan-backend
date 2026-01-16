@@ -1,18 +1,19 @@
-require("dotenv").config();
-const app = require("./src/app"); // Express app
-const sequelize = require("./src/config/db"); // instance Sequelize
+// server.js
+require("dotenv").config();              // Charge les variables d'environnement
+const app = require("./src/app");        // Import de l'instance Express
+const sequelize = require("./src/config/db"); // Import de Sequelize
 
 const PORT = process.env.PORT || 8080;
 
 async function startServer() {
   try {
-    // 🔹 Vérifier la connexion à la DB
+    // 🔹 Vérifie la connexion à la DB
     await sequelize.authenticate();
     console.log("✅ Database connection OK");
 
-    // 🔹 Synchronisation des tables (⚠️ uniquement en dev !)
+    // 🔹 Synchronisation automatique des tables (⚠️ uniquement en dev)
     if (process.env.NODE_ENV !== "production") {
-      await sequelize.sync({ alter: true });
+      await sequelize.sync({ alter: true }); // ajuste les tables aux modèles
       console.log("✅ Tables synchronisées (dev mode)");
     }
 
@@ -26,4 +27,5 @@ async function startServer() {
   }
 }
 
+// Lancer le serveur
 startServer();
