@@ -41,7 +41,7 @@ Ville.init(
 // Une ville appartient à un département
 Ville.belongsTo(Departement, {
   foreignKey: "departement_id",
-  as: "departement_obj", // 🔹 cohérent avec la structure du controller
+  as: "departement", // 🔹 cohérent avec la structure du controller
 });
 
 // Optionnel : un département a plusieurs villes
