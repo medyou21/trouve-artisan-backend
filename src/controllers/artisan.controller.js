@@ -5,7 +5,7 @@ const Ville = require("../models/ville");
 const Departement = require("../models/departement");
 const Specialite = require("../models/specialite");
 
-// Fonction générique pour inclure les relations
+// Relations communes pour toutes les requêtes
 const includeRelations = [
   { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
   { model: Ville, as: "ville_obj", attributes: ["id", "nom"] },
@@ -24,7 +24,7 @@ exports.getAll = async (req, res) => {
   }
 };
 
-// ✅ Top artisans (exemple : par note ou popularité)
+// ✅ Top artisans (exemple par note)
 exports.getTopArtisans = async (req, res) => {
   try {
     const artisans = await Artisan.findAll({
@@ -89,7 +89,7 @@ exports.getOne = async (req, res) => {
   }
 };
 
-// ✅ Filtres par clé générique
+// ✅ Fonctions génériques pour filtrer par clé
 const filterBy = (field) => async (req, res) => {
   try {
     const artisans = await Artisan.findAll({
