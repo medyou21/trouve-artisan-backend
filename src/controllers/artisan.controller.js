@@ -166,27 +166,39 @@ exports.getBySpecialite = filterBy("specialite_id");
 // 🔹 filtre par departement
 exports.getByDepartement = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // id du département
     const artisans = await Artisan.findAll({
       include: [
         { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
         {
           model: Ville,
-          as: "Ville",
+          as: "ville",
           attributes: ["id", "nom"],
           include: [
             {
               model: Departement,
               as: "departement",
               attributes: ["id", "code", "nom"],
-              where: { id },
+              where: { id }, // 🔹 filtre par département
             },
           ],
         },
         { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
       ],
     });
-    res.status(200).json(artisans);
+
+    // Normalisation pour frontend (optionnelle)
+    const normalized = artisans.map(a => ({
+      id: a.id,
+      nom: a.nom,
+      specialite: a.specialite_obj?.nom || "",
+      ville: a.ville?.nom || "",
+      departement: a.ville?.departement || null,
+      note: Number(a.note) || 0,
+      image: a.image || "/images/placeholder.jpg",
+    }));
+
+    res.status(200).json(normalized);
   } catch (error) {
     console.error("Erreur getByDepartement :", error);
     res.status(500).json({ message: "Erreur serveur" });
