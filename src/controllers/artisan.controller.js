@@ -16,7 +16,7 @@ const includeRelations = [
   },
   {
     model: Ville,
-    as: "ville_obj",
+    as: "ville",
     attributes: ["id", "nom"],
     include: [
       {

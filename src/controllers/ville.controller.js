@@ -9,7 +9,7 @@ exports.getAll = async (req, res) => {
       include: [
         {
           model: Departement,
-          as: "departement_obj",
+          as: "departement",
           attributes: ["id", "code", "nom"],
         },
       ],
@@ -31,7 +31,7 @@ exports.getOne = async (req, res) => {
       include: [
         {
           model: Departement,
-          as: "departement_obj",
+          as: "departement",
           attributes: ["id", "code", "nom"],
         },
       ],
