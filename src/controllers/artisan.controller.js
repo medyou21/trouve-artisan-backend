@@ -187,17 +187,6 @@ exports.getByDepartement = async (req, res) => {
       ],
     });
 
-    // Normalisation pour frontend (optionnelle)
-    const normalized = artisans.map(a => ({
-      id: a.id,
-      nom: a.nom,
-      specialite: a.specialite_obj?.nom || "",
-      ville: a.ville?.nom || "",
-      departement: a.ville?.departement || null,
-      note: Number(a.note) || 0,
-      image: a.image || "/images/placeholder.jpg",
-    }));
-
     res.status(200).json(normalized);
   } catch (error) {
     console.error("Erreur getByDepartement :", error);
