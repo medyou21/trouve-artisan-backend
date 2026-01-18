@@ -172,7 +172,7 @@ exports.getByDepartement = async (req, res) => {
         { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
         {
           model: Ville,
-          as: "ville",
+          as: "Ville",
           attributes: ["id", "nom"],
           include: [
             {
