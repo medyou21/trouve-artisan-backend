@@ -114,7 +114,7 @@ Artisan.belongsTo(Specialite, {
 
 Artisan.belongsTo(Ville, {
   foreignKey: "ville_id",
-  as: "ville_obj",
+  as: "ville",
 });
 
 module.exports = Artisan;
