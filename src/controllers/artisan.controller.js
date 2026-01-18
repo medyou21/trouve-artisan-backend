@@ -166,7 +166,7 @@ exports.getBySpecialite = filterBy("specialite_id");
 // 🔹 filtre par departement
 exports.getByDepartement = async (req, res) => {
   try {
-    const { id } = req.params; // id du département
+    const { id } = req.params;
     const artisans = await Artisan.findAll({
       include: [
         { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
@@ -179,15 +179,14 @@ exports.getByDepartement = async (req, res) => {
               model: Departement,
               as: "departement",
               attributes: ["id", "code", "nom"],
-              where: { id }, // 🔹 filtre par département
+              where: { id },
             },
           ],
         },
         { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
       ],
     });
-
-    res.status(200).json(normalized);
+    res.status(200).json(artisans);
   } catch (error) {
     console.error("Erreur getByDepartement :", error);
     res.status(500).json({ message: "Erreur serveur" });
