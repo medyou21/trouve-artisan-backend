@@ -98,7 +98,7 @@ exports.filter = async (req, res) => {
 
     const villeInclude = {
       model: Ville,
-      as: "ville_obj",
+      as: "ville",
       attributes: ["id", "nom"],
       include: [
         {
@@ -172,7 +172,7 @@ exports.getByDepartement = async (req, res) => {
         { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
         {
           model: Ville,
-          as: "ville_obj",
+          as: "ville",
           attributes: ["id", "nom"],
           include: [
             {
