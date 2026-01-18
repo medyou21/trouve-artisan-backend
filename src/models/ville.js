@@ -47,7 +47,7 @@ Ville.belongsTo(Departement, {
 // Optionnel : un département a plusieurs villes
 Departement.hasMany(Ville, {
   foreignKey: "departement_id",
-  as: "villes",
+  as: "ville",
 });
 
 module.exports = Ville;
