@@ -166,7 +166,13 @@ exports.getBySpecialite = filterBy("specialite_id");
 // 🔹 filtre par departement
 exports.getByDepartement = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id: departement_id } = req.params;
+
+    if (!departement_id) {
+      return res.status(400).json({ message: "ID du département requis" });
+    }
+
+    // Filtre sur le département via la relation ville -> departement
     const artisans = await Artisan.findAll({
       include: [
         { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
@@ -174,18 +180,23 @@ exports.getByDepartement = async (req, res) => {
           model: Ville,
           as: "ville",
           attributes: ["id", "nom"],
+          required: true, // L’artisan doit avoir une ville
           include: [
             {
               model: Departement,
               as: "departement",
               attributes: ["id", "code", "nom"],
-              where: { id },
+              required: true, // La ville doit avoir ce département
             },
           ],
         },
         { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
       ],
+      where: {
+        "$ville.departement.id$": departement_id, // Filtre directement sur la relation imbriquée
+      },
     });
+
     res.status(200).json(artisans);
   } catch (error) {
     console.error("Erreur getByDepartement :", error);
