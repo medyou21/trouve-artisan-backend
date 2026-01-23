@@ -10,7 +10,7 @@ exports.sendMail = async (req, res) => {
   try {
     const { nom, email, objet, message, artisan_id } = req.body;
 
-    // Validation basique
+    // 🔹 Validation basique
     if (!nom || !email || !objet || !message) {
       return res.status(400).json({ message: "Tous les champs sont obligatoires" });
     }
@@ -19,18 +19,18 @@ exports.sendMail = async (req, res) => {
       return res.status(400).json({ message: "Email invalide" });
     }
 
-    // Récupération du destinataire depuis la DB si artisan_id fourni
+    // 🔹 Détermination du destinataire
     let receiverEmail = process.env.MAIL_RECEIVER; // fallback statique
     if (artisan_id) {
       const artisan = await Artisan.findByPk(artisan_id);
-      if (artisan) {
-        if (artisan.email) {
-          receiverEmail = artisan.email;
-        } else {
-          console.warn(`Artisan ID=${artisan_id} n'a pas d'email. Utilisation du fallback.`);
-        }
+      if (artisan?.email) {
+        receiverEmail = artisan.email;
       } else {
-        console.warn(`Artisan ID=${artisan_id} introuvable. Utilisation du fallback.`);
+        console.warn(
+          artisan
+            ? `Artisan ID=${artisan_id} n'a pas d'email. Utilisation du fallback.`
+            : `Artisan ID=${artisan_id} introuvable. Utilisation du fallback.`
+        );
       }
     }
 
@@ -40,11 +40,11 @@ exports.sendMail = async (req, res) => {
 
     console.log(`📧 Envoi du mail à : ${receiverEmail}`);
 
-    // Création du transporteur SMTP
+    // 🔹 Création du transporteur SMTP
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: parseInt(process.env.SMTP_PORT) || 587,
-      secure: parseInt(process.env.SMTP_PORT) === 465, // SSL si port 465
+      port: parseInt(process.env.SMTP_PORT, 10) || 587,
+      secure: parseInt(process.env.SMTP_PORT, 10) === 465, // SSL si port 465
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
@@ -53,6 +53,7 @@ exports.sendMail = async (req, res) => {
       debug: true,
     });
 
+    // 🔹 Options du mail
     const mailOptions = {
       from: `"${nom}" <${email}>`,
       to: receiverEmail,
@@ -66,27 +67,26 @@ exports.sendMail = async (req, res) => {
       `,
     };
 
-    // Envoi du mail
+    // 🔹 Envoi du mail
     const info = await transporter.sendMail(mailOptions);
-
     console.log("✅ Mail envoyé avec succès :", info.messageId);
 
-    res.status(200).json({ message: "Message envoyé avec succès" });
-
+    return res.status(200).json({ message: "Message envoyé avec succès" });
   } catch (error) {
     console.error("Erreur envoi mail :", error);
     console.error("Stack :", error.stack);
 
     let errMsg = "Erreur lors de l'envoi du message";
 
+    // 🔹 Gestion des erreurs SMTP/Gmail
     if (error.response && error.response.includes("Invalid login")) {
       errMsg = "Erreur d'authentification : vérifie ton mot de passe d'application Gmail";
     } else if (error.code === "EAUTH") {
       errMsg = "Erreur d'authentification SMTP : utilisateur ou mot de passe incorrect";
-    } else if (error.code === "ECONNECTION" || error.code === "ETIMEDOUT") {
+    } else if (["ECONNECTION", "ETIMEDOUT"].includes(error.code)) {
       errMsg = "Impossible de se connecter au serveur SMTP : vérifie host/port";
     }
 
-    res.status(500).json({ message: errMsg });
+    return res.status(500).json({ message: errMsg });
   }
 };
