@@ -34,8 +34,8 @@ exports.sendMail = async (req, res) => {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
       },
-    //  logger: true,
-      //debug: true,
+     logger: true,
+    debug: true,
     });
 
     const mailOptions = {
