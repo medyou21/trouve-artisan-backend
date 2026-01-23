@@ -1,9 +1,14 @@
+// controllers/contact.controller.js
 const nodemailer = require("nodemailer");
 
+/**
+ * Envoi d'un message via le formulaire de contact
+ */
 exports.sendMail = async (req, res) => {
   try {
     const { nom, email, objet, message } = req.body;
 
+    // Validation basique
     if (!nom || !email || !objet || !message) {
       return res.status(400).json({ message: "Tous les champs sont obligatoires" });
     }
@@ -12,14 +17,14 @@ exports.sendMail = async (req, res) => {
       return res.status(400).json({ message: "Email invalide" });
     }
 
-    // Transporteur SMTP avec TLS
+    // Création du transporteur SMTP
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.gmail.com",
       port: parseInt(process.env.SMTP_PORT) || 587,
-      secure: false, // true si port 465
+      secure: parseInt(process.env.SMTP_PORT) === 465, // SSL si port 465
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        pass: process.env.MAIL_PASS, // Mot de passe d'application
       },
     });
 
@@ -36,15 +41,27 @@ exports.sendMail = async (req, res) => {
       `,
     };
 
+    // Envoi du mail
     await transporter.sendMail(mailOptions);
 
     res.status(200).json({ message: "Message envoyé avec succès" });
+
   } catch (error) {
+    // Affichage détaillé pour débogage Clever Cloud
     console.error("Erreur envoi mail :", error);
-    const errMsg =
-      error.response && error.response.includes("Invalid login")
-        ? "Erreur d'authentification du mail"
-        : "Erreur lors de l'envoi du message";
+    console.error("Stack :", error.stack);
+
+    // Message utilisateur simplifié
+    let errMsg = "Erreur lors de l'envoi du message";
+
+    if (error.response && error.response.includes("Invalid login")) {
+      errMsg = "Erreur d'authentification : vérifie ton mot de passe d'application Gmail";
+    } else if (error.code === "EAUTH") {
+      errMsg = "Erreur d'authentification SMTP : utilisateur ou mot de passe incorrect";
+    } else if (error.code === "ECONNECTION" || error.code === "ETIMEDOUT") {
+      errMsg = "Impossible de se connecter au serveur SMTP : vérifie host/port";
+    }
+
     res.status(500).json({ message: errMsg });
   }
 };
