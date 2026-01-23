@@ -38,8 +38,8 @@ exports.sendMail = async (req, res) => {
       port: parseInt(process.env.SMTP_PORT) || 587,
       secure: parseInt(process.env.SMTP_PORT) === 465, // SSL si port 465
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS, // Mot de passe d'application
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD, // Mot de passe d'application
       },
     });
 
