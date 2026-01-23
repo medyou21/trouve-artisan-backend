@@ -1,12 +1,14 @@
 // controllers/contact.controller.js
 const nodemailer = require("nodemailer");
+const Artisan = require("../models/Artisan");
 
 /**
  * Envoi d'un message via le formulaire de contact
+ * Le destinataire peut être dynamique selon l'artisan
  */
 exports.sendMail = async (req, res) => {
   try {
-    const { nom, email, objet, message } = req.body;
+    const { nom, email, objet, message, artisan_id } = req.body;
 
     // Validation basique
     if (!nom || !email || !objet || !message) {
@@ -15,6 +17,19 @@ exports.sendMail = async (req, res) => {
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ message: "Email invalide" });
+    }
+
+    // Récupération du destinataire depuis la DB si artisan_id fourni
+    let receiverEmail = process.env.MAIL_RECEIVER; // fallback
+    if (artisan_id) {
+      const artisan = await Artisan.findByPk(artisan_id);
+      if (artisan && artisan.email) {
+        receiverEmail = artisan.email;
+      }
+    }
+
+    if (!receiverEmail) {
+      return res.status(400).json({ message: "Aucun destinataire trouvé" });
     }
 
     // Création du transporteur SMTP
@@ -30,7 +45,7 @@ exports.sendMail = async (req, res) => {
 
     const mailOptions = {
       from: `"${nom}" <${email}>`,
-      to: process.env.MAIL_RECEIVER,
+      to: receiverEmail, // dynamique
       subject: objet,
       text: `Nom : ${nom}\nEmail : ${email}\n\nMessage :\n${message}`,
       html: `
@@ -47,11 +62,9 @@ exports.sendMail = async (req, res) => {
     res.status(200).json({ message: "Message envoyé avec succès" });
 
   } catch (error) {
-    // Affichage détaillé pour débogage Clever Cloud
     console.error("Erreur envoi mail :", error);
     console.error("Stack :", error.stack);
 
-    // Message utilisateur simplifié
     let errMsg = "Erreur lors de l'envoi du message";
 
     if (error.response && error.response.includes("Invalid login")) {
