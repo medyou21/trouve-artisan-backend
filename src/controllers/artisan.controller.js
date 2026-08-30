@@ -10,11 +10,6 @@ const Specialite = require("../models/specialite");
 ===================== */
 const includeRelations = [
   {
-    model: Category,
-    as: "categorie",
-    attributes: ["id", "nom", "slug"],
-  },
-  {
     model: Ville,
     as: "ville",
     attributes: ["id", "nom"],
@@ -29,7 +24,8 @@ const includeRelations = [
   {
     model: Specialite,
     as: "specialite_obj",
-    attributes: ["id", "nom"],
+    attributes: ["id", "nom", "categorie_id"],
+    include: [{ model: Category, as: "categorie", attributes: ["id", "nom", "slug"] }],
   },
 ];
 
@@ -92,7 +88,6 @@ exports.filter = async (req, res) => {
     const { categorie_id, departement_id, ville_id, specialite_id } = req.query;
 
     const where = {};
-    if (categorie_id) where.categorie_id = categorie_id;
     if (ville_id) where.ville_id = ville_id;
     if (specialite_id) where.specialite_id = specialite_id;
 
@@ -116,9 +111,14 @@ exports.filter = async (req, res) => {
     const artisans = await Artisan.findAll({
       where,
       include: [
-        { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
         villeInclude,
-        { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
+        {
+          model: Specialite,
+          as: "specialite_obj",
+          attributes: ["id", "nom", "categorie_id"],
+          where: categorie_id ? { categorie_id } : undefined,
+          include: [{ model: Category, as: "categorie", attributes: ["id", "nom", "slug"] }],
+        },
       ],
     });
 
@@ -159,7 +159,31 @@ const filterBy = (field) => async (req, res) => {
   }
 };
 
-exports.getByCategorie = filterBy("categorie_id");
+exports.getByCategorie = async (req, res) => {
+  try {
+    const artisans = await Artisan.findAll({
+      include: [
+        {
+          model: Specialite,
+          as: "specialite_obj",
+          required: true,
+          where: { categorie_id: req.params.id },
+          include: [{ model: Category, as: "categorie", attributes: ["id", "nom", "slug"] }],
+        },
+        {
+          model: Ville,
+          as: "ville",
+          attributes: ["id", "nom"],
+          include: [{ model: Departement, as: "departement", attributes: ["id", "code", "nom"] }],
+        },
+      ],
+    });
+    return res.status(200).json(artisans);
+  } catch (error) {
+    console.error("Erreur filtre catégorie :", error);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+};
 exports.getByVille = filterBy("ville_id");
 exports.getBySpecialite = filterBy("specialite_id");
 
@@ -175,7 +199,6 @@ exports.getByDepartement = async (req, res) => {
     // Filtre sur le département via la relation ville -> departement
     const artisans = await Artisan.findAll({
       include: [
-        { model: Category, as: "categorie", attributes: ["id", "nom", "slug"] },
         {
           model: Ville,
           as: "ville",
@@ -190,7 +213,12 @@ exports.getByDepartement = async (req, res) => {
             },
           ],
         },
-        { model: Specialite, as: "specialite_obj", attributes: ["id", "nom"] },
+        {
+          model: Specialite,
+          as: "specialite_obj",
+          attributes: ["id", "nom", "categorie_id"],
+          include: [{ model: Category, as: "categorie", attributes: ["id", "nom", "slug"] }],
+        },
       ],
       where: {
         "$ville.departement.id$": departement_id, // Filtre directement sur la relation imbriquée
@@ -201,5 +229,51 @@ exports.getByDepartement = async (req, res) => {
   } catch (error) {
     console.error("Erreur getByDepartement :", error);
     res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+/* =====================
+   ADMINISTRATION CRUD
+===================== */
+exports.create = async (req, res) => {
+  try {
+    const artisan = await Artisan.create(pickArtisanFields(req.body));
+    const created = await Artisan.findByPk(artisan.id, { include: includeRelations });
+    return res.status(201).json(created);
+  } catch (error) {
+    console.error("Erreur create artisan :", error);
+    return res.status(400).json({ message: "Données artisan invalides" });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const artisan = await Artisan.findByPk(req.params.id);
+    if (!artisan) return res.status(404).json({ message: "Artisan non trouvé" });
+
+    await artisan.update(pickArtisanFields(req.body));
+    const updated = await Artisan.findByPk(artisan.id, { include: includeRelations });
+    return res.status(200).json(updated);
+  } catch (error) {
+    console.error("Erreur update artisan :", error);
+    return res.status(400).json({ message: "Données artisan invalides" });
+  }
+};
+
+function pickArtisanFields(body) {
+  const allowed = ["nom", "note", "image", "email", "site_web", "a_propos", "top", "specialite_id", "ville_id"];
+  return Object.fromEntries(allowed.filter((key) => body[key] !== undefined).map((key) => [key, body[key]]));
+}
+
+exports.remove = async (req, res) => {
+  try {
+    const artisan = await Artisan.findByPk(req.params.id);
+    if (!artisan) return res.status(404).json({ message: "Artisan non trouvé" });
+
+    await artisan.destroy();
+    return res.status(204).send();
+  } catch (error) {
+    console.error("Erreur delete artisan :", error);
+    return res.status(500).json({ message: "Erreur serveur" });
   }
 };

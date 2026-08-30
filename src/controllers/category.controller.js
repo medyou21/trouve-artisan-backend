@@ -1,33 +1,14 @@
-// models/Category.js
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
-const Artisan = require("./Artisan");
+const Category = require("../models/category");
 
-const Category = sequelize.define(
-  "Category",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    nom: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    slug: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      unique: true,
-    },
-  },
-  {
-    tableName: "categories",
-    timestamps: false,
+exports.getAll = async (_req, res) => {
+  try {
+    const categories = await Category.findAll({
+      attributes: ["id", "nom", "slug"],
+      order: [["nom", "ASC"]],
+    });
+    return res.status(200).json(categories);
+  } catch (error) {
+    console.error("Erreur getAll catégories :", error);
+    return res.status(500).json({ message: "Erreur serveur" });
   }
-);
-
-// Relation avec Artisan
-Category.hasMany(Artisan, { foreignKey: "categorie_id", as: "artisans" });
-
-module.exports = Category;
+};

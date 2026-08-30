@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const artisanController = require("../controllers/artisan.controller");
+const authenticateAdmin = require("../middleware/authenticateAdmin");
+const { artisanRules, validateRequest } = require("../middleware/validators");
 
 // ✅ Tous les artisans
 router.get("/", artisanController.getAll);
@@ -22,6 +24,11 @@ router.get("/ville/:id", artisanController.getByVille);
 
 // ✅ Artisans par spécialité
 router.get("/specialite/:id", artisanController.getBySpecialite);
+
+// Administration sécurisée : création, modification et suppression
+router.post("/", authenticateAdmin, artisanRules, validateRequest, artisanController.create);
+router.put("/:id", authenticateAdmin, artisanRules, validateRequest, artisanController.update);
+router.delete("/:id", authenticateAdmin, artisanController.remove);
 
 // ✅ Un artisan par ID (TOUJOURS À LA FIN)
 router.get("/:id", artisanController.getOne);

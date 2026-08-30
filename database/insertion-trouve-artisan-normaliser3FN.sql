@@ -8,9 +8,9 @@
 -- ============================
 INSERT INTO categories (id, nom, slug) VALUES
 (1, 'Bâtiment', 'batiment'),
-(2, 'Services', 'services');
+(2, 'Services', 'services'),
 (3, 'Fabrication', 'fabrication'),
-(4, 'Alimentation', 'alimentation'),
+(4, 'Alimentation', 'alimentation');
 
 
 -- ============================
@@ -50,22 +50,22 @@ INSERT INTO villes (id, nom, departement_id) VALUES
 -- ============================
 -- Insertion des spécialités
 -- ============================
-INSERT INTO specialites (id, nom) VALUES
-(1, 'Boucher'),
-(2, 'Boulanger'),
-(3, 'Chocolatier'),
-(4, 'Traiteur'),
-(5, 'Chauffagiste'),
-(6, 'Electricien'),
-(7, 'Menuisier'),
-(8, 'Plombier'),
-(9, 'Bijoutier'),
-(10, 'Couturier'),
-(11, 'Ferronier'),
-(12, 'Coiffeur'),
-(13, 'Fleuriste'),
-(14, 'Toiletteur'),
-(15, 'Webdesign');
+INSERT INTO specialites (id, nom, categorie_id) VALUES
+(1, 'Boucher', 4),
+(2, 'Boulanger', 4),
+(3, 'Chocolatier', 4),
+(4, 'Traiteur', 4),
+(5, 'Chauffagiste', 1),
+(6, 'Electricien', 1),
+(7, 'Menuisier', 1),
+(8, 'Plombier', 1),
+(9, 'Bijoutier', 3),
+(10, 'Couturier', 3),
+(11, 'Ferronier', 3),
+(12, 'Coiffeur', 2),
+(13, 'Fleuriste', 2),
+(14, 'Toiletteur', 2),
+(15, 'Webdesign', 2);
 
 
 -- ============================
@@ -85,91 +85,90 @@ INSERT INTO artisans (
   site_web,
   image,
   top,
-  categorie_id,
   specialite_id,
   ville_id
 ) VALUES
 (1, 'Boucherie Dumont', 4.5,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'Boucherie.Dumont@gmail.com', '', '/images/boucher.jpg', 0,
- 4, 1, 1),
+ 1, 1),
 
 (2, 'Au pain chaud', 4.8,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'aupainchaud@hotmail.com', '', '/images/boulanger.jpg', 1,
- 4, 2, 2),
+ 2, 2),
 
 (3, 'Chocolaterie Labbé', 4.9,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'chocolaterie-labbe@gmail.com', 'https://chocolaterie-labbe.fr', '/images/chocolatier.jpg', 1,
- 4, 3, 1),
+ 3, 1),
 
 (4, 'Traiteur Truchon', 4.1,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'contact@truchon-traiteur.fr', 'https://truchon-traiteur.fr', '/images/alimentations.jpg', 0,
- 4, 4, 1),
+ 4, 1),
 
 (5, 'Orville Salmons', 5,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'o-salmons@live.com', '', '/images/chauffagiste.jpg', 1,
- 1, 5, 3),
+ 5, 3),
 
 (6, 'Mont Blanc Eléctricité', 4.5,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'contact@mont-blanc-electricite.com', 'https://mont-blanc-electricite.com', '/images/electricien.jpg', 0,
- 1, 6, 4),
+ 6, 4),
 
 (7, 'Boutot & fils', 4.7,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'boutot-menuiserie@gmail.com', 'https://boutot-menuiserie.com', '/images/menuiserie.jpg', 0,
- 1, 7, 5),
+ 7, 5),
 
 (8, 'Vallis Bellemare', 4,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'v.bellemare@gmail.com', 'https://plomberie-bellemare.com', '/images/plombier.jpg', 0,
- 1, 8, 6),
+ 8, 6),
 
 (9, 'Claude Quinn', 4.2,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'claude.quinn@gmail.com', '', '/images/bijoutier.jpg', 0,
- 3, 9, 7),
+ 9, 7),
 
 (10, 'Amitee Lécuyer', 4.5,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'a.amitee@hotmail.com', 'https://lecuyer-couture.com', '/images/couturier.jpg', 0,
- 3, 10, 8),
+ 10, 8),
 
 (11, 'Ernest Carignan', 5,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'e-carigan@hotmail.com', '', '/images/ferronier.jpg', 0,
- 3, 11, 9),
+ 11, 9),
 
 (12, 'Royden Charbonneau', 3.8,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'r.charbonneau@gmail.com', '', '/images/coiffeur.jpg', 0,
- 2, 12, 10),
+ 12, 10),
 
 (13, 'Leala Dennis', 3.8,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'l.dennos@hotmail.fr', 'https://coiffure-leala-chambery.fr', '/images/coiffeur1.jpg', 0,
- 2, 12, 11),
+ 12, 11),
 
 (14, 'C''est sup''hair', 4.1,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'sup-hair@gmail.com', 'https://sup-hair.fr', '/images/coiffeur.jpg', 0,
- 2, 12, 12),
+ 12, 12),
 
 (15, 'Le monde des fleurs', 4.6,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'contact@le-monde-des-fleurs-annonay.fr', 'https://le-monde-des-fleurs-annonay.fr', '/images/fleuriste.jpg', 0,
- 2, 13, 13),
+ 13, 13),
 
 (16, 'Valérie Laderoute', 4.5,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'v-laredoute@gmail.com', '', '/images/toiletteur.jpg', 0,
- 2, 14, 14),
+ 14, 14),
 
 (17, 'CM Graphisme', 4.4,
  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eleifend ante sem, id volutpat massa fermentum nec. Praesent volutpat scelerisque mauris, quis sollicitudin tellus sollicitudin.',
  'contact@cm-graphisme.com', 'https://cm-graphisme.com', '/images/webdesign.jpg', 0,
- 2, 15, 14);
+ 15, 14);

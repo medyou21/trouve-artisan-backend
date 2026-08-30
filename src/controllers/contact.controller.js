@@ -10,15 +10,6 @@ exports.sendMail = async (req, res) => {
   try {
     const { nom, email, objet, message, artisan_id } = req.body;
 
-    // 🔹 Validation basique
-    if (!nom || !email || !objet || !message) {
-      return res.status(400).json({ message: "Tous les champs sont obligatoires" });
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ message: "Email invalide" });
-    }
-
     // 🔹 Détermination du destinataire
     let receiverEmail = process.env.MAIL_RECEIVER; // fallback statique
     if (artisan_id) {
@@ -59,12 +50,6 @@ exports.sendMail = async (req, res) => {
       to: receiverEmail,
       subject: objet,
       text: `Nom : ${nom}\nEmail : ${email}\n\nMessage :\n${message}`,
-      html: `
-        <p><strong>Nom :</strong> ${nom}</p>
-        <p><strong>Email :</strong> ${email}</p>
-        <p><strong>Message :</strong></p>
-        <p>${message.replace(/\n/g, "<br>")}</p>
-      `,
     };
 
     // 🔹 Envoi du mail

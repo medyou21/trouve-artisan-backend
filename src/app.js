@@ -12,6 +12,7 @@ const villeRoutes = require("./routes/ville.routes");
 const departementRoutes = require("./routes/departement.routes");
 const specialiteRoutes = require("./routes/specialite.routes");
 const contactRoutes = require("./routes/contact.routes");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -25,10 +26,11 @@ app.use(helmet());
 
 // 🔹 CORS : autorisation de certains domaines
 const allowedOrigins = [
+  process.env.FRONT_URL,
   "https://trouve-artisan-frontend-mohameds-projects-8c8684ce.vercel.app",
   "https://trouve-artisan-frontend-git-main-mohameds-projects-8c8684ce.vercel.app",
   "http://localhost:5173",
-];
+].filter(Boolean);
 
 app.use(
   cors({
@@ -42,7 +44,7 @@ app.use(
 );
 
 // 🔹 Parser JSON
-app.use(express.json());
+app.use(express.json({ limit: "20kb" }));
 
 // 🔹 Limiteur de requêtes
 app.use(
@@ -60,6 +62,7 @@ app.use("/api/villes", villeRoutes);
 app.use("/api/departements", departementRoutes);
 app.use("/api/specialites", specialiteRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/auth", authRoutes);
 
 // 🔹 Route racine
 app.get("/", (req, res) => {

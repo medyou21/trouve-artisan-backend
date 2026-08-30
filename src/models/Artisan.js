@@ -1,7 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
-const Category = require("./category");
 const Ville = require("./ville");
 const Specialite = require("./specialite");
 
@@ -57,17 +56,6 @@ Artisan.init(
        CLÉS ÉTRANGÈRES
     ===================== */
 
-    categorie_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "category",
-        key: "id",
-      },
-      onDelete: "RESTRICT",
-      onUpdate: "CASCADE",
-    },
-
     specialite_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -101,11 +89,6 @@ Artisan.init(
 /* =====================
    ASSOCIATIONS
 ===================== */
-
-Artisan.belongsTo(Category, {
-  foreignKey: "categorie_id",
-  as: "categorie",
-});
 
 Artisan.belongsTo(Specialite, {
   foreignKey: "specialite_id",
